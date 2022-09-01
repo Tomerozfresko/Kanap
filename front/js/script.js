@@ -37,9 +37,7 @@ function createKanap(data) {
     }
 }
 
-//add error handeling to any promise 
-//document the code using JSDOC 
 // TODO LIST : 
-//presenet numbers in local string 
-//delete apiURL - we don't really need to declere it any time 
-//why i need to use settime out this is not good
+//document the code using JSDOC
+//make sure there is error handeling to any promise 
+
