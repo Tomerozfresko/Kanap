@@ -129,7 +129,7 @@ function removeItemFromLocalStorage(id,color,cart) {
     return;
 }
 
-
+//
 
 function changeItemQuantity(id,color,newQty,cart) {
     cart.forEach((elemnt) => {
