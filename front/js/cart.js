@@ -10,8 +10,8 @@ import {orderUrl,sendCartToLocalStorage,getCart,fetchData,apiURL, updateQuantity
 //DOM elements
 const  cartItems = document.getElementById('cart__items');
 const  totalPrice = document.getElementById('totalPrice');
-const  Quantity = document.getElementById('totalQuantity');
-const  OrderBtn = document.querySelector('#order');
+const  quantity = document.getElementById('totalQuantity');
+const  orderBtn = document.querySelector('#order');
 const deleteItemButtons = document.getElementsByClassName('deleteItem');
 const changeQuantityButtons = document.getElementsByClassName('itemQuantity');
 
@@ -81,7 +81,7 @@ function createProductHtml(data,id,qty,color) {
 
 async function updateTotals() {
     totalPrice.innerHTML = (await calculateTotalPrice(getCart())).toLocaleString();
-    Quantity.innerHTML = totalQuantity(getCart());
+    quantity.innerHTML = totalQuantity(getCart());
 }
 
 
@@ -129,7 +129,6 @@ function removeItemFromLocalStorage(id,color,cart) {
     return;
 }
 
-//
 
 function changeItemQuantity(id,color,newQty,cart) {
     cart.forEach((elemnt) => {
@@ -170,7 +169,7 @@ async function calculateTotalPrice(cart, sum = 0) {
 
 
 //'Click event' Listener for 'Add to cart' button 
-OrderBtn.addEventListener('click', formValidation); 
+orderBtn.addEventListener('click', formValidation); 
 
 
 
