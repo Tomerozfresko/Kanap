@@ -8,10 +8,10 @@ import {orderUrl,sendCartToLocalStorage,getCart,fetchData,apiURL, updateQuantity
 
 
 //DOM elements
-const  cartItems = document.getElementById('cart__items');
-const  totalPrice = document.getElementById('totalPrice');
-const  quantity = document.getElementById('totalQuantity');
-const  orderBtn = document.querySelector('#order');
+const cartItems = document.getElementById('cart__items');
+const totalPrice = document.getElementById('totalPrice');
+const quantity = document.getElementById('totalQuantity');
+const orderBtn = document.querySelector('#order');
 const deleteItemButtons = document.getElementsByClassName('deleteItem');
 const changeQuantityButtons = document.getElementsByClassName('itemQuantity');
 
@@ -138,7 +138,7 @@ function changeItemQuantity(id,color,newQty,cart) {
         sendCartToLocalStorage(cart);
         console.log(localStorage.cart);
     });
-    }
+}
 
 
 
