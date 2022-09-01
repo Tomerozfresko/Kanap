@@ -37,7 +37,7 @@ function createKanap(data) {
     }
 }
 
-// TODO LIST : 
+// TODO: 
 //document the code using JSDOC
 //make sure there is error handeling to any promise 
 
