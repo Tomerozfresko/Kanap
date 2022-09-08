@@ -26,6 +26,7 @@ async function createKanap() {
     }
 }
 
-createKanap();
-
+// TODO: 
+//document the code using JSDOC
+//make sure there is error handeling to any promise 
 
