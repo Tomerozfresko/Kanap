@@ -7,8 +7,8 @@ import {fetchData} from './utils.js';
  */
 async function createKanap() {
     const products = await fetchData();
-    for (let product of products) {
-        let elemnt = `
+    products.forEach(product => {
+        document.getElementById('items').innerHTML += `
         <a href="./product.html?id=${product._id}">
         <article>
         <img
@@ -22,8 +22,7 @@ async function createKanap() {
         </article>
         </a>
         `;
-        document.getElementById('items').innerHTML += elemnt;
-    }
+    });
 }
 
 createKanap();
