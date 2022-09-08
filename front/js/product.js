@@ -90,18 +90,20 @@ function addItemToCart() {
 *------Functions-------------**
 *******************************/
 
-//Get product id number by using URLSearchParams  
-// function getProductId(id) {
-//     const productId = new URLSearchParams(window.location.search);
-//     return productId.get(id);
-// }
 
-
-
-//Check if both color and qty are choosen by the user 
+//Check if color or qty are missing 
 function colorOrQuantityIsMissing() {
     return (parseInt(qty.value) === 0 || color.value === '')
 }
+
+//TODO - check if i can change the it to ForEach
+// function ItemInCart (cart) {
+//     cart.forEach( (product) => {
+//         if (product.productId === productId && product.color === color.value) {
+//             return true;
+//     }})
+//     return false;
+// }
 
 
 //Return TRUE if item already in cart
@@ -116,10 +118,9 @@ const ItemInCart = (cart) => {
 
 
 
-// Create product array with the selected item and color
 
 /**
- * 
+ * Create product array with the selected item and color
  * @returns {object} - the selected item object
  */
 function createProductArray() {
@@ -133,7 +134,10 @@ function createProductArray() {
 
 
 
-//Adding selected item to local storage
+/**
+ * Adding selected item to local storage
+ * @param {array} cart 
+ */
 function addNewItem(cart) {
     cart.push(createProductArray());
     sendCartToLocalStorage(cart);
@@ -156,8 +160,3 @@ function updateQuantity(id,color,qty,cart) {
     })
 }
 
-
-
-// TODO LIST 
-//add error handeling to any promise 
-//document the code using JSDOC 

@@ -19,7 +19,13 @@ async function fetchData(url) {
 
 
 
-
+function ItemInCart (cart) {
+    cart.forEach( (product) => {
+        if (product.productId === productId && product.color === color.value) {
+            return true;
+    }})
+    return false;
+}
 
 
 
