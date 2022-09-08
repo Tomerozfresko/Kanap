@@ -1,16 +1,26 @@
-import {sendCartToLocalStorage ,updateQuantity,getCart,fetchData, apiURL } from './utils.js';
+import {sendCartToLocalStorage, getCart,fetchData} from './utils.js';
+
+
+/***********************************
+*-------Global variables---------- **
+**********************************/
 
 
 
-//Item ID from window.location.search)
-const productId = getProductId('id');
+/**
+ * Get product ID from window.location.search)
+ * @param {string} productId
+ */
+const productId = new URLSearchParams(window.location.search).get('id');
+
+
 
 /***********************************
 *-------------Refrences---------- **
 **********************************/
 
 
-//DOM elements refrences
+
 const title = document.querySelector("title");
 const img = document.querySelector(".item__img");
 const  name = document.getElementById("title");
@@ -26,8 +36,13 @@ const addToCartButton = document.getElementById("addToCart");
 *------Populate the DOM-------- **
 **********************************/
 
-async function loadProduct() {
-    let data = await fetchData(apiURL,productId);
+
+
+/**
+ * create the product DOM elemnt
+ */
+async function createProduct() {
+    const data = await fetchData(productId);
         //IMG src
         img.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
         // Data.name and title
@@ -38,12 +53,10 @@ async function loadProduct() {
         // Description
         description.innerHTML = data.description;
         // Colors
-        for (let i = 0; i < data.colors.length; i++) {
-            color.innerHTML += `<option value="${data.colors[i]}">${data.colors[i]}</option>`;
-        }
+        data.colors.forEach(element => color.innerHTML += `<option value="${element}">${element}</option>`); 
 }
 
-loadProduct();
+createProduct();
 
 
 
@@ -54,7 +67,7 @@ loadProduct();
 **********************************/
 
 
-
+//event listener
 addToCartButton.addEventListener('click', addItemToCart);
 
 function addItemToCart() {
@@ -62,12 +75,12 @@ function addItemToCart() {
         return alert('Please choose quantity and Color')
     }
     else {
-        if (ItemInCart()) {
-            updateQuantity(productId,color.value,parseInt(qty.value));
+        if (ItemInCart(getCart())) {
+            updateQuantity(productId,color.value,parseInt(qty.value),getCart());
             console.log('Item Qty has been modified');
         }
         else {
-            addNewItem();
+            addNewItem(getCart());
             console.log('New Item has been added');
         }
     } 
@@ -78,57 +91,73 @@ function addItemToCart() {
 *******************************/
 
 //Get product id number by using URLSearchParams  
-function getProductId(id) {
-    let productId = new URLSearchParams(window.location.search);
-    return productId.get(id);
-}
+// function getProductId(id) {
+//     const productId = new URLSearchParams(window.location.search);
+//     return productId.get(id);
+// }
+
+
 
 //Check if both color and qty are choosen by the user 
 function colorOrQuantityIsMissing() {
     return (parseInt(qty.value) === 0 || color.value === '')
 }
 
-//Return TRUE if item already in cart
 
-const ItemInCart = () => { 
-    const cart = getCart();
+//Return TRUE if item already in cart
+const ItemInCart = (cart) => { 
     for (let i = 0; i < cart.length; i++) {
-        if (cart[i][0] === productId && cart[i][2] === color.value) {
+        if (cart[i].productId === productId && cart[i].color === color.value) {
             return true;
         }
     }
     return false;
 }
 
-ItemInCart();
 
 
 // Create product array with the selected item and color
+
+/**
+ * 
+ * @returns {object} - the selected item object
+ */
 function createProductArray() {
-    const item = [productId, parseInt(qty.value), color.value];
+    const item = {
+        productId: productId,
+        qty:parseInt(qty.value),
+        color: color.value
+    }
     return item;
 }
 
 
-//to change the items to object(!) TODO
-// function createProductArray() {
-//     const item = {
-//         productId: productId, 
-//         qty: parseInt(qty.value),
-//         color: color.value
-//     };
-//     return item;
-// }
 
 //Adding selected item to local storage
-function addNewItem() {
-    const cart = getCart();
-    const item = createProductArray();
-    cart.push(item);
+function addNewItem(cart) {
+    cart.push(createProductArray());
     sendCartToLocalStorage(cart);
+}
+
+/**
+ * 
+ * @param {string} id - the product id
+ * @param {string} color the selected color by the user
+ * @param {number} qty the selected qty by the user
+ * @param {array} cart - cart from local storage
+ */
+function updateQuantity(id,color,qty,cart) {
+    cart.forEach((product) => {
+        if (product.productId === id && product.color === color) {
+            product.qty += parseInt(qty);
+            sendCartToLocalStorage(cart);
+            console.log(localStorage);
+        }
+    })
 }
 
 
 
-
-
+// TODO LIST 
+//add error handeling to any promise 
+//document the code using JSDOC 

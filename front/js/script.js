@@ -1,45 +1,31 @@
-import {fetchData,apiURL} from './utils.js';
-
-const productsContainer = document.getElementById('items');
-
-fetchData(apiURL)
-    .then((data) => {
-        createKanap(data);
-    })
-    .catch ((e) => {
-        console.log(e);
-    });
+import {fetchData} from './utils.js';
 
 /**
- * Function iterates the products from the API
- * Create HTML element for each product
- * then pushes the element to the products continer.
- * @param {string} data 
+ * Create DOM element for any product
+ * 
+ * @param {array} products - Array of product objects 
  */
-//
-function createKanap(data) {
-    for (let item of data) {
-        let product = `
-        <a href="./product.html?id=${item._id}">
+async function createKanap() {
+    const products = await fetchData();
+    for (let product of products) {
+        let elemnt = `
+        <a href="./product.html?id=${product._id}">
         <article>
         <img
-        src="${item.imageUrl}"
-        alt="${item.altTxt}"
+        src="${product.imageUrl}"
+        alt="${product.altTxt}"
         />
-        <h3 class="productName">${item.name}</h3>
+        <h3 class="productName">${product.name}</h3>
         <p class="productDescription">
-        ${item.description}
+        ${product.description}
         </p>
         </article>
         </a>
         `;
-        productsContainer.innerHTML += product;
+        document.getElementById('items').innerHTML += elemnt;
     }
 }
 
-//add error handeling to any promise 
-//document the code using JSDOC 
-// TODO LIST : 
-//presenet numbers in local string 
-//delete apiURL - we don't really need to declere it any time 
-//why i need to use settime out this is not good
+createKanap();
+
+

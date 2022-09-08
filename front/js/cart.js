@@ -1,4 +1,4 @@
-import {orderUrl,sendCartToLocalStorage,getCart,fetchData,apiURL, updateQuantity} from './utils.js';
+import {orderUrl,sendCartToLocalStorage,getCart,fetchData} from './utils.js';
 
 
 /******************************
@@ -8,7 +8,6 @@ import {orderUrl,sendCartToLocalStorage,getCart,fetchData,apiURL, updateQuantity
 
 
 //DOM elements
-const cartItems = document.getElementById('cart__items');
 const totalPrice = document.getElementById('totalPrice');
 const quantity = document.getElementById('totalQuantity');
 const orderBtn = document.querySelector('#order');
@@ -26,19 +25,48 @@ const addressErrorMsg = document.getElementById("addressErrorMsg");
 
 
 
-//Create DOM elemnt for each item in cart
+/******************************
+*---------Functions ---------**
+*******************************/
+
+
+createDomElements(getCart());
+
+/**
+* Create DOM elemnt for each product in the cart
+* @param {array} cart 
+*/
 async function createDomElements(cart) {
-    cart.forEach(async (element) => {
-        const [id, qty, color] = [element[0], element[1],element[2]];
-        let data = await fetchData(apiURL,id);
-        const inner = createProductHtml(data,id,qty,color,data.price);
-        cartItems.innerHTML += inner;
+    cart.forEach(async (product) => {
+        const data = await fetchData(product.productId);
+        document.getElementById('cart__items').innerHTML += `<article class="cart__item" data-id="${data._id}" data-color="${product.color}" data-quantity="${product.qty}" >
+        <div class="cart__item__img">
+        <img src="${data.imageUrl}" alt="${data.altTxt}">
+        </div>
+        <div class="cart__item__content">
+        <div class="cart__item__content__description">
+        <h2>${data.name}</h2>
+        <p>${product.color}</p>
+        <p>${data.price.toLocaleString()} €</p>
+        </div>
+        <div class="cart__item__content__settings">
+        <div class="cart__item__content__settings__quantity">
+        <p>Qté : </p>
+        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.qty}">
+        </div>
+        <div class="cart__item__content__settings__delete">
+        <p class="deleteItem">Delete</p>
+        </div>
+        </div>
+        </div>
+        </article>`;
     });
     updateTotals();
 }
-createDomElements(getCart());
 
-//Add 'change qty' and 'delete' events listeners 
+/**
+* adding event Listeners after document finishes loading
+*/
 window.addEventListener('load', () => {
     addDeleteEventListeners();
     addChangeQtyEventListeners();
@@ -46,53 +74,17 @@ window.addEventListener('load', () => {
 
 
 
-/******************************
-*---------Functions ---------**
-*******************************/
 
 
-//Creating DOM element for product
-function createProductHtml(data,id,qty,color) {
-    const inner = `<article class="cart__item" data-id="${id}" data-color="${color}" data-quantity="${qty}" >
-    <div class="cart__item__img">
-    <img src="${data.imageUrl}" alt="${data.altTxt}">
-    </div>
-    <div class="cart__item__content">
-    <div class="cart__item__content__description">
-    <h2>${data.name}</h2>
-    <p>${color}</p>
-    <p>${data.price.toLocaleString()}€</p>
-    </div>
-    <div class="cart__item__content__settings">
-    <div class="cart__item__content__settings__quantity">
-    <p>Qté : </p>
-    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${qty}">
-    </div>
-    <div class="cart__item__content__settings__delete">
-    <p class="deleteItem">Delete</p>
-    </div>
-    </div>
-    </div>
-    </article>`;
-    return inner;
-}
-
-
-
-async function updateTotals() {
-    totalPrice.innerHTML = (await calculateTotalPrice(getCart())).toLocaleString();
-    quantity.innerHTML = totalQuantity(getCart());
-}
-
-
-
-// 'Delete event' listener
+/**
+* adding event listener for any 'delete' button
+*/
 function addDeleteEventListeners() {
     for (let i = 0; i < deleteItemButtons.length; i++) {
         deleteItemButtons[i].addEventListener ('click', (event) => {
             console.log('Item removed');
-            let id = event.target.closest('article').dataset.id;
-            let color = event.target.closest('article').dataset.color;
+            const id = event.target.closest('article').dataset.id;
+            const color = event.target.closest('article').dataset.color;
             removeItemFromLocalStorage(id,color,getCart())
             event.target.closest('article').remove();
             updateTotals();
@@ -102,14 +94,17 @@ function addDeleteEventListeners() {
 };
 
 
-// 'Change quantity' event listener
+
+/**
+* adding event listener for any qty change made by user
+*/
 function addChangeQtyEventListeners() {
     for (let i = 0; i < changeQuantityButtons.length; i++) {
         changeQuantityButtons[i].addEventListener ('change', (event) => {
             console.log('Quantity has been changed');
-            let id = event.target.closest('article').dataset.id;
-            let color = event.target.closest('article').dataset.color;
-            let newQty = event.target.value;
+            const id = event.target.closest('article').dataset.id;
+            const color = event.target.closest('article').dataset.color;
+            const newQty = event.target.value;
             changeItemQuantity(id,color,newQty,getCart())
             updateTotals();
         })
@@ -118,10 +113,25 @@ function addChangeQtyEventListeners() {
 
 
 
-//Delete the item from local storage
+/**
+* calculate the up-to-date totals and qty's and update the DOM
+*/
+async function updateTotals() {
+    totalPrice.innerHTML = (await calculateTotalPrice(getCart())).toLocaleString();
+    quantity.innerHTML = totalQuantity(getCart());
+}
+
+
+
+/**
+* Removing the selected item from the cart
+* @param {string} id - the selected product id
+* @param {string} color the selected product color
+* @param {array} cart - products in cart array
+*/
 function removeItemFromLocalStorage(id,color,cart) {
     cart.forEach((element,index) => {
-        if (element[0] === id && element[2] === color) {
+        if (element.productId === id && element.color === color) {
             cart.splice(index,1);
             sendCartToLocalStorage(cart);
         }
@@ -129,34 +139,47 @@ function removeItemFromLocalStorage(id,color,cart) {
     return;
 }
 
-
+/**
+ * Change the product qty in case if exists in cart
+ * @param {string} id 
+ * @param {string} color 
+ * @param {number} newQty 
+ * @param {array} cart 
+ */
 function changeItemQuantity(id,color,newQty,cart) {
-    cart.forEach((elemnt) => {
-        if (elemnt[0] === id && elemnt[2] === color) {
-            elemnt[1] = newQty;
+    cart.forEach((element) => {
+        if (element.productId === id && element.color === color) {
+            element.qty = newQty;
         }
         sendCartToLocalStorage(cart);
-        console.log(localStorage.cart);
     });
 }
 
 
-
-// Calculation of the total articles in cart
+/**
+ * calculating the total products in the cart
+ * @param {array} cart 
+ * @param {number} quantity 
+ * @returns {number} - the total number of items in cart
+ */
 function totalQuantity(cart,quantity = 0) {
     cart.forEach((elemnt)=> {
-        quantity += parseInt(elemnt[1]);
+        quantity += parseInt(elemnt.qty);
     })
     return quantity;
 }
 
 
 
-// Total price of items in cart
-//Price is imported from server 
+/**
+ * calculating the total cost of products in the cart
+ * @param {array} cart 
+ * @param {number} sum 
+ * @returns {number} the total cost of articles in the cart
+ */
 async function calculateTotalPrice(cart, sum = 0) {
     for await (const item of cart) {
-        sum+= (await fetchData(apiURL,item[0])).price * parseInt(item[1])
+        sum+= (await fetchData(item.productId)).price * parseInt(item.qty)
     }
     return sum;
 }
@@ -168,12 +191,18 @@ async function calculateTotalPrice(cart, sum = 0) {
 *******************************/
 
 
-//'Click event' Listener for 'Add to cart' button 
+/**
+ * Click event' Listener to 'Add to cart' button 
+ */
 orderBtn.addEventListener('click', formValidation); 
 
 
 
-// Verify form details provided by the user
+/**
+ * Will validate contact fields before sending to confirmation page
+ * @param {event} event 
+ * @returns {null} 
+ */
 function formValidation(event) {
     if (getCart().length === 0) {
         alert('Cart is empty');
@@ -190,7 +219,7 @@ function formValidation(event) {
     //Create contact object
     const contact = createContact(email, firstName, lastName, address, city);
     if (email && firstName && lastName && address && city && getCart().length != 0) {
-        sendData(contact);
+        sendOrder(contact);
     }
     else {
         console.log('Please fill in your contact details');
@@ -200,9 +229,12 @@ function formValidation(event) {
 
 
 
-//create Contact 
+/**
+ * return the contact object
+ * @returns {object} 
+ */
 function createContact() {
-    let contact = {
+    const contact = {
         email : document.querySelector('#email').value,
         firstName :document.querySelector('#firstName').value,
         lastName :document.querySelector('#lastName').value,
@@ -214,21 +246,18 @@ function createContact() {
 
 
 
-async function sendData(contact) {
+async function sendOrder(contact) {
     try {
-        let jsonData = makeJsonData(contact,getCart());
-        let res = await fetch(orderUrl, {
+        const res = await fetch(orderUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: jsonData,
+            body: makeJsonData(contact),
         });
-        let data = await res.json()
-        localStorage.clear();
-        console.log(data);
-        let confirmationUrl = "./confirmation.html?id=" + data.orderId;
-        window.location.href = confirmationUrl;
+        const data = await res.json()
+        // localStorage.clear();
+        window.location.href = "./confirmation.html?id=" + data.orderId;
     }
     catch (e) {
         console.log(e);
@@ -236,18 +265,10 @@ async function sendData(contact) {
     return contact;
 }
 
-//to check generally if we should use LET/CONST(!) TODO
 
-
-//JSON DATA
 function makeJsonData(contact) {
-    const items = getCart()
-    const products = [];
-    for (let i = 0; i < items.length; i++) {
-        products.push(items[i][0]);
-    }
-    const jsonData = JSON.stringify({contact, products });
-    return jsonData;
+    const products = getCart().map(product => product.productId )
+    return JSON.stringify({contact, products });
 }
 
 
@@ -330,7 +351,6 @@ function emailValidation(email) {
         return false;
     }
 }
-
 
 
 
