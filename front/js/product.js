@@ -103,11 +103,22 @@ const ItemInCart = () => {
 ItemInCart();
 
 
-//Create product array with the selected item and color
+// Create product array with the selected item and color
 function createProductArray() {
     const item = [productId, parseInt(qty.value), color.value];
     return item;
 }
+
+
+//to change the items to object(!) TODO
+// function createProductArray() {
+//     const item = {
+//         productId: productId, 
+//         qty: parseInt(qty.value),
+//         color: color.value
+//     };
+//     return item;
+// }
 
 //Adding selected item to local storage
 function addNewItem() {

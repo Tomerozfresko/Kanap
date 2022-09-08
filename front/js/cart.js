@@ -51,7 +51,7 @@ window.addEventListener('load', () => {
 *******************************/
 
 
-//Creating the DOM element
+//Creating DOM element for product
 function createProductHtml(data,id,qty,color) {
     const inner = `<article class="cart__item" data-id="${id}" data-color="${color}" data-quantity="${qty}" >
     <div class="cart__item__img">
@@ -180,15 +180,15 @@ function formValidation(event) {
     }
     event.preventDefault();
     //email
-    let email= emailValidation(document.querySelector('#email').value);
+    const email= emailValidation(document.querySelector('#email').value);
     //Names 
-    let firstName = firstNameValidation(document.querySelector('#firstName').value)
-    let lastName = nameValidation(document.querySelector('#lastName').value)
+    const firstName = firstNameValidation(document.querySelector('#firstName').value)
+    const lastName = nameValidation(document.querySelector('#lastName').value)
     //location
-    let address = addressValidation(document.querySelector('#address').value)
-    let city = cityValidation(document.querySelector('#city').value)
+    const address = addressValidation(document.querySelector('#address').value)
+    const city = cityValidation(document.querySelector('#city').value)
     //Create contact object
-    let contact = createContact(email, firstName, lastName, address, city);
+    const contact = createContact(email, firstName, lastName, address, city);
     if (email && firstName && lastName && address && city && getCart().length != 0) {
         sendData(contact);
     }
@@ -236,16 +236,17 @@ async function sendData(contact) {
     return contact;
 }
 
+//to check generally if we should use LET/CONST(!) TODO
 
 
 //JSON DATA
 function makeJsonData(contact) {
-    let items = getCart()
-    let products = [];
+    const items = getCart()
+    const products = [];
     for (let i = 0; i < items.length; i++) {
         products.push(items[i][0]);
     }
-    let jsonData = JSON.stringify({contact, products });
+    const jsonData = JSON.stringify({contact, products });
     return jsonData;
 }
 
