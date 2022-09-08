@@ -256,7 +256,7 @@ async function sendOrder(contact) {
             body: makeJsonData(contact),
         });
         const data = await res.json()
-        // localStorage.clear();
+        localStorage.clear();
         window.location.href = "./confirmation.html?id=" + data.orderId;
     }
     catch (e) {

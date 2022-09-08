@@ -1,4 +1,3 @@
-export const apiURL = `http://localhost:3000/api/products/`;
 export const productURL = `http://localhost:3000/api/products/`;
 export const orderUrl = `http://localhost:3000/api/products/order`;
 
