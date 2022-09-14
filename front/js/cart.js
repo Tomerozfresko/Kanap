@@ -13,8 +13,8 @@ import {
 const totalPrice = document.querySelector("#totalPrice");
 const quantity = document.querySelector("#totalQuantity");
 const orderBtn = document.querySelector("#order");
-const deleteItemButtons = document.querySelectorAll(".deleteItem");
-const changeQuantityButtons = document.querySelectorAll(".itemQuantity");
+const deleteItemButtons = document.getElementsByClassName("deleteItem");
+const changeQuantityButtons = document.getElementsByClassName("itemQuantity");
 
 //DOM elements - Error Messages
 const emailErrorMsg = document.querySelector("#emailErrorMsg");
@@ -74,8 +74,7 @@ function addDeleteEventListeners() {
   for (let i = 0; i < deleteItemButtons.length; i++) {
     deleteItemButtons[i].addEventListener("click", (event) => {
       console.log("Item removed");
-      const id = event.target.closest("article").dataset.id;
-      const color = event.target.closest("article").dataset.color;
+      const { id, color } = event.target.closest("article").dataset;
       removeItemFromLocalStorage(id, color, getCart());
       event.target.closest("article").remove();
       updateTotals();
@@ -95,6 +94,7 @@ function addChangeQtyEventListeners() {
       const newQty = event.target.value;
       changeItemQuantity(id, color, newQty, getCart());
       updateTotals();
+      console.log(localStorage.cart);
     });
   }
 }
@@ -111,7 +111,9 @@ window.addEventListener("load", () => {
  * calculate the up-to-date totals and qty's and update the DOM
  */
 async function updateTotals() {
-  totalPrice.innerHTML = calculateTotalPrice(await getCart()).toLocaleString();
+  totalPrice.innerHTML = (
+    await calculateTotalPrice(getCart())
+  ).toLocaleString();
   quantity.innerHTML = totalQuantity(getCart());
 }
 
