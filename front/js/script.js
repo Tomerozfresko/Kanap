@@ -1,14 +1,14 @@
-import {fetchData} from './utils.js';
+import { fetchData } from "./utils.js";
 
 /**
  * Create DOM element for any product
- * 
- * @param {array} products - Array of product objects 
+ *
+ * @param {array} products - Array of product objects
  */
 async function createKanap() {
-    const products = await fetchData();
-    products.forEach(product => {
-        document.getElementById('items').innerHTML += `
+  const products = await fetchData();
+  products.forEach((product) => {
+    document.getElementById("items").innerHTML += `
         <a href="./product.html?id=${product._id}">
         <article>
         <img
@@ -22,8 +22,10 @@ async function createKanap() {
         </article>
         </a>
         `;
-    });
+  });
 }
 
 createKanap();
+
+
 
