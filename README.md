@@ -3,7 +3,7 @@
 This is the front end and back end server for Project 5 of the Web Developer path.
 
 ### Prerequisites ###
-"Live Server" VS extension
+"Live Server" VS extension,
 Node and `npm` installed locally on your machine.
 
 ### Back end ###
