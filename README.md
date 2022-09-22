@@ -2,11 +2,11 @@
 
 This is the front end and back end server for Project 5 of the Web Developer path.
 
-### Back end Prerequisites ###
+### Prerequisites ###
+"Live Server" VS extension
+Node and `npm` installed locally on your machine.
 
-You will need to have Node and `npm` installed locally on your machine.
-
-### Back end Installation ###
+### Back end ###
 
 Clone this repo. From the "back" folder of the project, run `npm install`. You 
 can then run the server with `node server`. 
@@ -15,5 +15,5 @@ server runs on another port for any reason, this is printed to the
 console when the server starts, e.g. `Listening on port 3001`.
 
 ### Front end ###
---"Live Server" VS extension is required--
-From the "front" folder of the project, open with live server the file "front/html/index.html".
+
+From the "front" folder of the project, open using the "Live server" extension the file "front/html/index.html".
