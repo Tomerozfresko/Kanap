@@ -5,9 +5,8 @@ import { sendCartToLocalStorage, getCart, fetchData } from "./utils.js";
  **********************************/
 
 /**
- * Get product ID from window.location.search)
- * @param {string} productId
- */
+ * Get product ID from window.location.search
+ **/
 const productId = new URLSearchParams(window.location.search).get("id");
 
 /***********************************
@@ -28,8 +27,10 @@ const addToCartButton = document.getElementById("addToCart");
  **********************************/
 
 /**
- * create the product DOM elemnt
- */
+ * Create the product DOM elemnt
+ * @param {void}
+ * @returns {void}
+ **/
 async function createProduct() {
   const data = await fetchData(productId);
   //IMG src
@@ -50,37 +51,51 @@ async function createProduct() {
 
 createProduct();
 
-/***********************************
- *Send selected item  to Cart page **
- **********************************/
+/******************************
+ *------Functions-------------**
+ *******************************/
 
 //event listener
 addToCartButton.addEventListener("click", addItemToCart);
 
+/**
+ * When user clicks the "Add to cart" button this function will handle the qty update || adding new item to the cart
+ * @param {void}
+ * @returns {void} Will return corresponding alert to the user
+ **/
 function addItemToCart() {
   if (colorOrQuantityIsMissing()) {
     return alert("Please choose quantity and Color");
   } else {
     if (ItemInCart(getCart())) {
       updateQuantity(productId, color.value, parseInt(qty.value), getCart());
-      console.log("Item Qty has been modified");
+      parseInt(qty.value) === 1
+        ? alert(`Your item has been succesfuly added to the cart`)
+        : alert("Your items has been succesfuly added to the cart");
     } else {
       addNewItem(getCart());
-      console.log("New Item has been added");
+      parseInt(qty.value) === 1
+        ? alert(`Your item has been succesfuly added to the cart`)
+        : alert("Your items has been succesfuly added to the cart");
     }
   }
 }
 
-/******************************
- *------Functions-------------**
- *******************************/
-
-//Check if color or qty are missing
+/**
+ * Check if the user select color AND quantity befor sending to local storage
+ * @param {void}
+ * @returns {boolean} Will return corresponding alert to the user
+ **/
 function colorOrQuantityIsMissing() {
   return parseInt(qty.value) === 0 || color.value === "";
 }
 
-//Return TRUE if item already in cart
+/**
+ * Check if the selected item already exists in the cart
+ * @param {array} cart The items objects array
+ * @returns {boolean} Return TRUE if the selected item already in cart
+ * @example ItemInCart = (cart) => false
+ **/
 const ItemInCart = (cart) => {
   for (let i = 0; i < cart.length; i++) {
     if (cart[i].productId === productId && cart[i].color === color.value) {
@@ -91,9 +106,10 @@ const ItemInCart = (cart) => {
 };
 
 /**
- * Create product array with the selected item and color
- * @returns {object} - the selected item object
- */
+ * Create item object with the selected id,qty and color
+ * @param {void}
+ * @returns {object} the selected item object
+ **/
 function createProductArray() {
   const item = {
     productId: productId,
@@ -105,7 +121,8 @@ function createProductArray() {
 
 /**
  * Adding selected item to local storage
- * @param {array} cart
+ * @param {array} cart The exisiting items from the local storgae
+ * @return {void}
  */
 function addNewItem(cart) {
   cart.push(createProductArray());
@@ -113,12 +130,14 @@ function addNewItem(cart) {
 }
 
 /**
- *
- * @param {string} id - the product id
- * @param {string} color the selected color by the user
- * @param {number} qty the selected qty by the user
+ * Update the total qty in local storage
+ * @param {string} id - Product id
+ * @param {string} color The user selected color
+ * @param {number} qty The user selected qty
  * @param {array} cart - cart from local storage
+ * @return {void}
  */
+
 function updateQuantity(id, color, qty, cart) {
   cart.forEach((product) => {
     if (product.productId === id && product.color === color) {

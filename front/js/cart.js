@@ -28,9 +28,10 @@ const addressErrorMsg = document.querySelector("#addressErrorMsg");
  *******************************/
 
 /**
- * Create DOM elemnt for each product in the cart
- * @param {array} cart
- */
+ * Create DOM elemnt for each selected product in the cart
+ * @param {array} cart The selected items objects array
+ * @returns {void}
+ **/
 async function createDomElements(cart) {
   cart.forEach(async (product) => {
     const data = await fetchData(product.productId);
@@ -68,8 +69,10 @@ async function createDomElements(cart) {
 createDomElements(getCart());
 
 /**
- * adding event listener for any 'delete' button
- */
+ * Adding event listener to any 'delete' button
+ * @param {void}
+ * @returns {void}
+ **/
 function addDeleteEventListeners() {
   for (let i = 0; i < deleteItemButtons.length; i++) {
     deleteItemButtons[i].addEventListener("click", (event) => {
@@ -82,10 +85,11 @@ function addDeleteEventListeners() {
     });
   }
 }
-
 /**
- * adding event listener for any qty change made by user
- */
+ * Adding event listener to any qty change  buttons
+ * @param {void}
+ * @returns {void}
+ **/
 function addChangeQtyEventListeners() {
   for (let i = 0; i < changeQuantityButtons.length; i++) {
     changeQuantityButtons[i].addEventListener("change", (event) => {
@@ -100,16 +104,20 @@ function addChangeQtyEventListeners() {
 }
 
 /**
- * adding event Listeners after document finishes loading
- */
+ * Adding event Listeners after document finishes loading
+ * @param {void}
+ * @returns {void}
+ **/
 window.addEventListener("load", () => {
   addDeleteEventListeners();
   addChangeQtyEventListeners();
 });
 
 /**
- * calculate the up-to-date totals and qty's and update the DOM
- */
+ * Update the items total qty and cost and change the DOM accordingly
+ * @param {void}
+ * @returns {void}
+ **/
 async function updateTotals() {
   totalPrice.innerHTML = (
     await calculateTotalPrice(getCart())
@@ -122,6 +130,7 @@ async function updateTotals() {
  * @param {string} id - the selected product id
  * @param {string} color the selected product color
  * @param {array} cart - products in cart array
+ * @return {void}
  */
 function removeItemFromLocalStorage(id, color, cart) {
   cart.forEach((element, index) => {
@@ -139,6 +148,7 @@ function removeItemFromLocalStorage(id, color, cart) {
  * @param {string} color
  * @param {number} newQty
  * @param {array} cart
+ * @return {void}
  */
 function changeItemQuantity(id, color, newQty, cart) {
   cart.forEach((element) => {
@@ -153,7 +163,7 @@ function changeItemQuantity(id, color, newQty, cart) {
  * calculating the total products in the cart
  * @param {array} cart
  * @param {number} quantity
- * @returns {number} - the total number of items in cart
+ * @returns {number} - The total number of items in cart
  */
 function totalQuantity(cart, quantity = 0) {
   cart.forEach((elemnt) => {
@@ -163,10 +173,10 @@ function totalQuantity(cart, quantity = 0) {
 }
 
 /**
- * calculating the total cost of products in the cart
+ * Calculating the total cost of products in the cart
  * @param {array} cart
  * @param {number} sum
- * @returns {number} the total cost of articles in the cart
+ * @returns {number} The total cost of articles in the cart
  */
 async function calculateTotalPrice(cart, sum = 0) {
   for await (const item of cart) {
@@ -180,14 +190,13 @@ async function calculateTotalPrice(cart, sum = 0) {
  *******************************/
 
 /**
- * Click event' Listener to 'Add to cart' button
+ * Adding click event listener to the 'Commander' button
  */
 orderBtn.addEventListener("click", formValidation);
-
 /**
  * Will validate contact fields before sending to confirmation page
- * @param {event} event
- * @returns {null}
+ * @param {event} event The auto received event object
+ * @returns {void}
  */
 function formValidation(event) {
   if (getCart().length === 0) {
@@ -219,6 +228,12 @@ function formValidation(event) {
   }
 }
 
+/**
+ * 1. Validating the contact fields input
+ * 2. Sending the order to the API =>
+ * @param {object} contact The user contact object
+ * @returns {void}
+ */
 async function sendOrder(contact) {
   try {
     const res = await fetch(orderUrl, {
@@ -234,16 +249,21 @@ async function sendOrder(contact) {
   } catch (e) {
     console.log(e);
   }
-  return contact;
+  // return contact;
 }
 
+/**
+ * Create the bundeled contact and items JSON
+ * @param {object} contact The user contact object
+ * @returns {json} The bundled JSON data
+ */
 function makeJsonData(contact) {
   const products = getCart().map((product) => product.productId);
   return JSON.stringify({ contact, products });
 }
 
-/******************************
- *------Values REGEX-------- --**
+/*******************************
+ **REGEX validations --**
  *******************************/
 
 //First name Validation

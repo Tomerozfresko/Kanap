@@ -1,10 +1,10 @@
 import { fetchData } from "./utils.js";
 
 /**
- * Create DOM element for any product
- *
- * @param {array} products - Array of product objects
- */
+ * Create DOM element for any product received from the API
+ * @param {void}
+ * @returns {void}
+ **/
 async function createKanap() {
   const products = await fetchData();
   products.forEach((product) => {
@@ -26,6 +26,3 @@ async function createKanap() {
 }
 
 createKanap();
-
-
-
