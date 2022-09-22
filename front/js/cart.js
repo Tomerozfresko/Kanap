@@ -299,9 +299,9 @@ function cityValidation(city) {
 // Email validation
 function emailValidation(email) {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-    return true;
+    return email;
   } else {
     emailErrorMsg.innerHTML = "Please enter valid email address.";
-    return email;
+    return false;
   }
 }
